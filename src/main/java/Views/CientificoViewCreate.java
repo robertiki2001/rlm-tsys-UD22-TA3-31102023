@@ -5,8 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import Controllers.CientificoCreateController;
-import Controllers.CientificoReadController;
+import Controllers.CientificoController;
 import Model.Cientifico;
 
 public class CientificoViewCreate extends JFrame{
@@ -19,7 +18,10 @@ public class CientificoViewCreate extends JFrame{
 	private JTextField textFieldDni;
 	private JTextField textFieldNomApels;
 	private JButton buttonCrearCientifico;
-	private JButton buttonMenu;
+	private JButton buttonCientifico;
+	private Cientifico cientifico;
+	private CientificoViewRead cientificoViewRead;
+	private CientificoController cientificoController;
 	private JTable table;
 
     public CientificoViewCreate() {
@@ -31,69 +33,73 @@ public class CientificoViewCreate extends JFrame{
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
-		buttonCrearCientifico = new JButton("Crear científico");
-		buttonCrearCientifico.setBounds(100, 213, 217, 23);
-		contentPane.add(buttonCrearCientifico);
-		
-		buttonCrearCientifico.addActionListener(new CientificoCreateController(this));
-		
-		labelDni = new JLabel("Dni:");
-		labelDni.setBounds(63,103,200,20);
-		contentPane.add(labelDni);
-		
-		labelNomApels = new JLabel("Nombre y apellidos:");
-		labelNomApels.setBounds(29, 151, 200, 20);
-		contentPane.add(labelNomApels);
-		
-		textFieldDni = new JTextField();
-		textFieldDni.setBounds(126, 103, 176, 20);
-		contentPane.add(textFieldDni);
-		textFieldDni.setColumns(10);
-		
+		buttonCientifico = new JButton("Científicos");
+		titulo = new JLabel("REGISTO DE UN NUEVO CIENTÍFICO");
+		table = new JTable();
+		cientificoViewRead = new CientificoViewRead();
+		cientificoController = new CientificoController();
 		textFieldNomApels = new JTextField();
+		textFieldDni = new JTextField();
+		labelNomApels = new JLabel("Nombre y apellidos:");
+		labelDni = new JLabel("Dni:");
+		buttonCrearCientifico = new JButton("Crear científico");
+
+		table.setBounds(29, 45, 596, 259);
+		titulo.setBounds(118, 62, 294, 30);
 		textFieldNomApels.setColumns(10);
 		textFieldNomApels.setBounds(126, 151, 176, 20);
+		textFieldDni.setBounds(126, 103, 176, 20);
+		textFieldDni.setColumns(10);
+		labelNomApels.setBounds(29, 151, 200, 20);
+		labelDni.setBounds(63,103,200,20);
+		buttonCrearCientifico.setBounds(100, 213, 217, 23);
+		buttonCientifico.setBounds(248, 11, 126, 23);
+		
+		contentPane.add(buttonCientifico);
+		contentPane.add(buttonCrearCientifico);
+		contentPane.add(labelDni);
+		contentPane.add(labelNomApels);
+		contentPane.add(textFieldDni);
 		contentPane.add(textFieldNomApels);
+		contentPane.add(titulo);	
+		contentPane.add(table);
+		contentPane.add(buttonCientifico);
 		
-		titulo = new JLabel("REGISTO DE UN NUEVO CIENTÍFICO");
-		titulo.setBounds(118, 62, 294, 30);
-		contentPane.add(titulo);
-		
-		buttonMenu = new JButton("Cientificos");
-		buttonMenu.setBounds(263, 11, 111, 30);
-		buttonMenu.addActionListener(new ActionListener() {
+		buttonCientifico.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
-			    Cientifico cientifico = new Cientifico();
-			    CientificoViewRead cientificoViewRead = new CientificoViewRead();
-			    CientificoReadController readController = new CientificoReadController(cientifico, cientificoViewRead);
-			    readController.iniciarVista();
 			    cientificoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
-		contentPane.add(buttonMenu);
-
 		
-		table = new JTable();
-		table.setBounds(29, 45, 596, 259);
-		contentPane.add(table);
+		buttonCrearCientifico.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	String dni = textFieldDni.getText();
+	            String nomApels = textFieldNomApels.getText();
+	            
+	            if (dni.isEmpty() || nomApels.isEmpty()) {
+	                JOptionPane.showMessageDialog(null, "Nombre y Dni son campos obligatorios.");
+	                return;
+	            }            
+	            cientifico = new Cientifico(dni, nomApels);
 
+	            if (cientificoController.insertarCientifico(cientifico)) {
+	               
+	                JOptionPane.showMessageDialog(null, "Cientifico insertado con éxito");
+	                
+	                limpiarFormulario();
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Error al insertar el Cientifico");
+	            }
+	            cientificoViewRead.actualizarCientificos();
+		    }
+		});
     }
 
-    public JButton getButtonCrearCientifico() {
-        return buttonCrearCientifico;
+    private void limpiarFormulario() {
+        textFieldDni.setText("");
+        textFieldNomApels.setText("");
     }
-    
-    public JTextField getTextFieldDni() {
-        return textFieldDni;
-    }
-    
-    public JTextField getTextFieldNomApels() {
-        return textFieldNomApels;
-    }
-    
-    
-
 }

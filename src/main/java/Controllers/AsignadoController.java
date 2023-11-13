@@ -5,19 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DB_Connection.ConnectionDB;
-import Model.Proyecto;
+import Model.Asignado;
 
-public class ProyectoController {
+public class AsignadoController {
 
-	public boolean insertarProyecto(Proyecto proyecto) {
+	// Método para insertar un cliente en la base de datos
+	public boolean insertarAsignado(Asignado asignado) {
 		Connection connection = ConnectionDB.getConnection();
-		String sql = "INSERT INTO proyecto (id, nombre, horas) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO asignado_a (id, cientifico, proyecto) VALUES (?, ?, ?)";
 
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, proyecto.getId());
-			statement.setString(2, proyecto.getNombre());
-			statement.setInt(3, proyecto.getHoras());
+			statement.setInt(1, asignado.getId());
+			statement.setString(2, asignado.getCientifico());
+			statement.setString(3, asignado.getProyecto());
 			int rowsInserted = statement.executeUpdate();
 
 			if (rowsInserted > 0) {
@@ -30,9 +31,9 @@ public class ProyectoController {
 		return false;
 	}
 
-	public List<Proyecto> obtenerProyectos() {
-		List<Proyecto> proyectos = new ArrayList<>();
-		String sql = "SELECT * FROM proyecto";
+	public List<Asignado> obtenerAsignados() {
+		List<Asignado> asignados = new ArrayList<>();
+		String sql = "SELECT * FROM asignado_a";
 
 		try {
 			Connection conexion = null;
@@ -41,12 +42,12 @@ public class ProyectoController {
 			ResultSet rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
-				String id = rs.getString("id");
-				String nombre = rs.getString("nombre");
-				int horas = rs.getInt("horas");
+				int id = rs.getInt("id");
+				String cientifico = rs.getString("cientifico");
+				String proyecto = rs.getString("proyecto");
 
-				Proyecto proyecto = new Proyecto(id, nombre, horas);
-				proyectos.add(proyecto);
+				Asignado asignado = new Asignado(id, cientifico, proyecto);
+				asignados.add(asignado);
 			}
 
 			rs.close();
@@ -55,20 +56,21 @@ public class ProyectoController {
 			e.printStackTrace();
 		}
 
-		return proyectos;
+		return asignados;
 	}
 
-	public boolean actualizarProyecto(Proyecto proyecto) {
+	public boolean actualizarAsignado(Asignado asignado) {
 		Connection connection = null;
 		PreparedStatement statement = null;
 
 		try {
 			connection = ConnectionDB.getConnection();
-			String sql = "UPDATE proyecto SET nombre = ?, horas = ? WHERE id = ?";
+			String sql = "UPDATE asignado_a SET cientifico = ?, proyecto = ? WHERE id = ?";
 			statement = connection.prepareStatement(sql);
-			statement.setString(1, proyecto.getNombre());
-			statement.setInt(2, proyecto.getHoras());
-			statement.setString(3, proyecto.getId());
+			statement.setString(1, asignado.getCientifico());
+			statement.setString(2, asignado.getProyecto());
+			statement.setInt(3, asignado.getId());
+			
 
 			int rowsUpdated = statement.executeUpdate();
 
@@ -90,15 +92,15 @@ public class ProyectoController {
 		return false;
 	}
 
-	public boolean eliminarProyecto(Proyecto proyecto) {
+	public boolean eliminarAsignado(Asignado asignado) {
 		Connection connection = null;
 		PreparedStatement statement = null;
 
 		try {
 			connection = ConnectionDB.getConnection();
-			String sql = "DELETE FROM proyecto WHERE id = ?";
+			String sql = "DELETE FROM asignado_a WHERE id = ?";
 			statement = connection.prepareStatement(sql);
-			statement.setString(1, proyecto.getId());
+			statement.setInt(1, asignado.getId());
 
 			int rowsDeleted = statement.executeUpdate();
 

@@ -16,7 +16,7 @@ public class InicializarVariables {
                 "  dni VARCHAR(8) PRIMARY KEY," +
                 "  nomApels NVARCHAR(255)" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +
-                "INSERT INTO cientificos (DNI, nomApels) VALUES "
+                "INSERT INTO cientificos (dni, nomApels) VALUES "
                 + "('12345678', 'Juan Perez'), "
                 + "('87654321', 'Maria Lopez'),"
                 + "('23456789', 'Pedro Ramirez'), "
@@ -39,9 +39,9 @@ public class InicializarVariables {
 		
 		String sqlAsignado_a = "DROP TABLE IF EXISTS asignado_a; " +
                 "CREATE TABLE asignado_a (" +
+                "  id INT AUTO_INCREMENT PRIMARY KEY," +
                 "  cientifico VARCHAR(8)," +
                 "  proyecto CHAR(4)," +
-                "  PRIMARY KEY (cientifico, proyecto)," +
                 "  FOREIGN KEY (cientifico) REFERENCES cientificos (dni) ON UPDATE CASCADE ON DELETE CASCADE," + 
                 "  FOREIGN KEY (proyecto) REFERENCES proyecto (id) ON UPDATE CASCADE ON DELETE CASCADE" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +

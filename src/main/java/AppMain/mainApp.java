@@ -2,7 +2,7 @@ package AppMain;
 
 import java.sql.SQLException;
 
-import Controllers.CientificoReadController;
+import Controllers.CientificoController;
 import DB_Connection.InicializarVariables;
 import Model.Cientifico;
 import Views.CientificoViewRead;
@@ -15,8 +15,8 @@ public class mainApp {
 		//
 	    Cientifico cientifico = new Cientifico();
 	    CientificoViewRead cientificoViewRead = new CientificoViewRead();
-	    CientificoReadController readController = new CientificoReadController(cientifico, cientificoViewRead);
-	    readController.iniciarVista();
+	    CientificoController cientificoController = new CientificoController(cientifico, cientificoViewRead);
+	    cientificoController.iniciarVista();
 	    cientificoViewRead.setVisible(true);
 	    
 	}

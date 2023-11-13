@@ -2,15 +2,13 @@ package Views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.*;
 
-import Controllers.AsignadoDeleteController;
-import Controllers.CientificoReadController;
+import Controllers.AsignadoController;
 import Model.AsignadoTable;
-import Model.Asignado_a;
-import Model.Cientifico;
-import Model.Proyecto;
+import Model.Asignado;
 
 public class AsignadoViewRead extends JFrame {
 
@@ -21,8 +19,11 @@ public class AsignadoViewRead extends JFrame {
 	private JButton buttonUpdateAsignado;
 	private JButton buttonDeleteAsignado;
 	private JTable table;
-	private JButton buttonListarProyectos;
-	private JButton buttonListarCientificos;
+	private JButton buttonProyectos;
+	private JButton buttonCientificos;
+	private AsignadoController asignadoController;
+	private List<Asignado> asignados;
+	private AsignadoTable model;
 
 	public AsignadoViewRead() {
 
@@ -35,123 +36,110 @@ public class AsignadoViewRead extends JFrame {
 		setContentPane(contentPane);
 
 		label = new JLabel("Lista de Asignados");
-		label.setBounds(41, 16, 200, 20);
-		contentPane.add(label);
-
 		buttonUpdateAsignado = new JButton("Editar");
-		buttonUpdateAsignado.setBounds(33, 355, 108, 20);
-		contentPane.add(buttonUpdateAsignado);
-
 		buttonDeleteAsignado = new JButton("Eliminar");
-		buttonDeleteAsignado.setBounds(162, 350, 108, 31);
+		buttonCrearAsignado = new JButton("Crear");
+		buttonProyectos = new JButton("Proyectos");
+		buttonCientificos = new JButton("Científicos");
+		table = new JTable();
+		asignadoController = new AsignadoController();
+		actualizarAsignados();
+		
+		label.setBounds(41, 16, 200, 20);
+		buttonUpdateAsignado.setBounds(63, 350, 94, 31);
+		buttonDeleteAsignado.setBounds(189, 350, 108, 31);
+		buttonCrearAsignado.setBounds(337, 350, 108, 31);
+		buttonProyectos.setBounds(266, 11, 108, 31);
+		buttonCientificos.setBounds(414, 11, 108, 31);
+		table.setBounds(29, 45, 596, 259);
+		
+		contentPane.add(label);
+		contentPane.add(buttonUpdateAsignado);
 		contentPane.add(buttonDeleteAsignado);
+		contentPane.add(buttonCrearAsignado);
+		contentPane.add(buttonProyectos);
+		contentPane.add(buttonCientificos);
+		contentPane.add(table);
 
-		buttonCrearAsignado = new JButton("Crear Asignado");
-		buttonCrearAsignado.setBounds(299, 350, 121, 31);
+
 		buttonCrearAsignado.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Crear una instancia de la vista ClienteViewCreate
 				AsignadoViewCreate createView = new AsignadoViewCreate();
-				createView.setVisible(true); // Mostrar la vista
+				createView.setVisible(true); 
 				dispose();
 			}
 		});
-		contentPane.add(buttonCrearAsignado);
-		/*
-		buttonUpdateCientifico.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int selectedRow = table.getSelectedRow();
-				if (selectedRow >= 0) {
-					CientificoTable model = (CientificoTable) table.getModel();
-					Cientifico cientificoSeleccionado = model.getCientifico(selectedRow);
-
-					CientificoViewUpdate updateView = new CientificoViewUpdate(cientificoSeleccionado);
-					updateView.setVisible(true);
-
-					CientificoUpdateController updateController = new CientificoUpdateController(updateView,
-							cientificoSeleccionado);
-					updateView.getButtonActualizarCientifico().addActionListener(updateController);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(null, "Selecciona un cientifico para actualizar");
-				}
-			}
-		});
-		*/
-		buttonDeleteAsignado.addActionListener(new ActionListener() {
+		buttonUpdateAsignado.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = table.getSelectedRow();
 				if (selectedRow >= 0) {
 					AsignadoTable model = (AsignadoTable) table.getModel();
-					Asignado_a asignadoSeleccionado = model.getAsignado_a(selectedRow);
+					Asignado asignadoSeleccionado = model.getAsignado(selectedRow);
 
-					// Crea una instancia del controlador ClienteDeleteController
-					AsignadoDeleteController deleteController = new AsignadoDeleteController();
-
-					int option = JOptionPane.showConfirmDialog(null,
-							"¿Estás seguro de que deseas eliminar esta asignación?", "Confirmar eliminación",
-							JOptionPane.YES_NO_OPTION);
-
-					if (option == JOptionPane.YES_OPTION) {
-						// Llama al método para eliminar el cliente
-						if (deleteController.eliminarAsignado(asignadoSeleccionado)) {
-							JOptionPane.showMessageDialog(null, "Asignación eliminada con éxito");
-							model.removeRowAt(selectedRow);
-							table.setModel(model);
-							table.repaint();
-						} else {
-							JOptionPane.showMessageDialog(null, "Error al eliminar la asignación");
-						}
-					}
+					AsignadoViewUpdate updateView = new AsignadoViewUpdate(asignadoSeleccionado);
+					updateView.setVisible(true);
+					dispose();
 				} else {
-					JOptionPane.showMessageDialog(null, "Selecciona una asignación para eliminar");
+					JOptionPane.showMessageDialog(null, "Selecciona un asignado para actualizar");
 				}
 			}
 		});
 		
-		buttonListarProyectos = new JButton("Proyectos");
-		buttonListarProyectos.setBounds(399, 11, 111, 30);
-		buttonListarProyectos.addActionListener(new ActionListener() {
+		buttonDeleteAsignado.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+				if (selectedRow >= 0) {
+					model = (AsignadoTable) table.getModel();
+					Asignado asignadoSeleccionado = model.getAsignado(selectedRow);
+
+					int option = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que deseas eliminar este asignado?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+
+					if (option == JOptionPane.YES_OPTION) {
+						if (asignadoController.eliminarAsignado(asignadoSeleccionado)) {
+							JOptionPane.showMessageDialog(null, "Asignado eliminado con éxito");
+							model.removeRowAt(selectedRow);
+							table.setModel(model);
+							table.repaint();
+						} else {
+							JOptionPane.showMessageDialog(null, "Error al eliminar el asignado");
+						}
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Selecciona un asignado para eliminar");
+				}
+			}
+		});
+	
+		buttonProyectos.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
 		    	ProyectoViewRead proyectoViewRead = new ProyectoViewRead();
 			    proyectoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
-		contentPane.add(buttonListarProyectos);
 		
-		buttonListarCientificos = new JButton("Cientificos");
-		buttonListarCientificos.setBounds(230, 11, 111, 30);
-		buttonListarCientificos.addActionListener(new ActionListener() {
+		buttonCientificos.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
-			    Cientifico cientifico = new Cientifico();
-			    CientificoViewRead cientificoViewRead = new CientificoViewRead();
-			    CientificoReadController readController = new CientificoReadController(cientifico, cientificoViewRead);
-			    readController.iniciarVista();
-			    cientificoViewRead.setVisible(true);
+		    	CientificoViewRead cientificoViewRead = new CientificoViewRead();
+		    	cientificoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
-		contentPane.add(buttonListarCientificos);
-
-		table = new JTable();
-		table.setBounds(29, 45, 596, 259);
-		contentPane.add(table);
 		
 	}
-
-	public JTable getTabla() {
-		return table;
-	}
-
-	public JButton getButtonDeleteAsignado() {
-		return buttonDeleteAsignado;
+	
+	public void actualizarAsignados()
+	{
+		asignados = asignadoController.obtenerAsignados();
+		
+	    if (asignados != null && !asignados.isEmpty()) {
+	    	model = new AsignadoTable(asignados);
+	        table.setModel(model);
+	    }
 	}
 }

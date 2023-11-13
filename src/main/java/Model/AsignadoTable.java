@@ -7,29 +7,29 @@ import javax.swing.table.AbstractTableModel;
 public class AsignadoTable extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 1L;
-	private List<Asignado_a> asignados_a;
-    private String[] columnNames = {"cientifico", "proyecto"};
+	private List<Asignado> asignados;
+    private String[] columnNames = {"id", "cientifico", "proyecto"};
 
-    public AsignadoTable(List<Asignado_a> asignados_a) {
-        this.asignados_a = asignados_a;
+    public AsignadoTable(List<Asignado> asignados) {
+        this.asignados = asignados;
     }
     
-    public List<Asignado_a> getAsignado_a() {
-		return asignados_a;
+    public List<Asignado> getAsignado() {
+		return asignados;
 	}
 
 
 	// Metodo para obtener el cliente en una fila específica
-    public Asignado_a getAsignado_a(int rowIndex) {
-        if (rowIndex >= 0 && rowIndex < asignados_a.size()) {
-            return asignados_a.get(rowIndex);
+    public Asignado getAsignado(int rowIndex) {
+        if (rowIndex >= 0 && rowIndex < asignados.size()) {
+            return asignados.get(rowIndex);
         }
         return null;
     }
 
     @Override
     public int getRowCount() {
-        return asignados_a.size();
+        return asignados.size();
     }
 
     @Override
@@ -44,12 +44,14 @@ public class AsignadoTable extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-    	Asignado_a asignado_a = asignados_a.get(rowIndex);
+    	Asignado asignado_a = asignados.get(rowIndex);
 
         switch (columnIndex) {
-            case 0:
-                return asignado_a.getCientifico();
+        	case 0:
+        		return asignado_a.getId();
             case 1:
+                return asignado_a.getCientifico();
+            case 2:
                 return asignado_a.getProyecto();
             default:
                 return null;
@@ -58,14 +60,14 @@ public class AsignadoTable extends AbstractTableModel {
     
     public void removeRowAt(int row) 
     {
-    	List<Asignado_a> nuevaTabla = new ArrayList<Asignado_a>();
+    	List<Asignado> nuevaTabla = new ArrayList<Asignado>();
     	
-    	for (int i = 0; i < this.asignados_a.size(); i++) 
+    	for (int i = 0; i < this.asignados.size(); i++) 
     	{
     		if(i != row)
-			nuevaTabla.add(this.asignados_a.get(i));
+			nuevaTabla.add(this.asignados.get(i));
 		}
     	
-    	this.asignados_a = nuevaTabla;
+    	this.asignados = nuevaTabla;
     }
 }

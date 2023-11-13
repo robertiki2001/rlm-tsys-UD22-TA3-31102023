@@ -5,10 +5,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
-import Controllers.AsignadoCreateController;
-import Controllers.AsignadoReadController;
+import Controllers.AsignadoController;
 import DB_Connection.FunctionsSQL;
-import Model.Asignado_a;
+import Model.Asignado;
 
 public class AsignadoViewCreate extends JFrame{
 	
@@ -18,10 +17,15 @@ public class AsignadoViewCreate extends JFrame{
 	private JLabel labelProyectoID;
 	private JLabel titulo;
 	private JButton buttonCrearAsignado;
-	private JButton buttonListarAsignado;
+	private JButton buttonAsignado;
 	private JTable table;
+	private JTextField textFieldId;
 	private JComboBox<String> comboBoxCientificoId;
 	private JComboBox<String> comboBoxProyectoId;
+
+	private Asignado asignado;
+	private AsignadoViewRead asignadoViewRead;
+	private AsignadoController asignadoController;
 
     public AsignadoViewCreate() {
     	setTitle("Vista crear video");
@@ -33,50 +37,60 @@ public class AsignadoViewCreate extends JFrame{
 		setContentPane(contentPane);
 		
 		comboBoxCientificoId = new JComboBox<String>();
-		comboBoxCientificoId.setBounds(116, 150, 96, 22);
-		contentPane.add(comboBoxCientificoId);
-		
 		comboBoxProyectoId = new JComboBox<String>();
-		comboBoxProyectoId.setBounds(116, 199, 96, 22);
-		contentPane.add(comboBoxProyectoId);
-		
 		labelCientificoId = new JLabel("Cientifico:");
-		labelCientificoId.setBounds(48, 151, 200, 20);
-		contentPane.add(labelCientificoId);
-		
 		labelProyectoID = new JLabel("Proyecto:");
-		labelProyectoID.setBounds(48, 200, 200, 20);
-		contentPane.add(labelProyectoID);				
-			
 		titulo = new JLabel("REGISTO DE UN NUEVO ASIGNADO");
-		titulo.setBounds(80, 82, 294, 30);
-		contentPane.add(titulo);
-		
 		buttonCrearAsignado = new JButton("Crear asignado");
-		buttonCrearAsignado.setBounds(118, 341, 149, 43);
-		contentPane.add(buttonCrearAsignado);
+		table = new JTable();
+		asignadoViewRead = new AsignadoViewRead();
+		asignadoController = new AsignadoController();
+		buttonAsignado = new JButton("Asignado");
 		
-		buttonListarAsignado = new JButton("Asignado");
-		buttonListarAsignado.setBounds(214, 11, 111, 30);
-		buttonListarAsignado.addActionListener(new ActionListener() {
+		comboBoxCientificoId.setBounds(116, 150, 96, 22);
+		comboBoxProyectoId.setBounds(116, 199, 96, 22);
+		labelCientificoId.setBounds(48, 151, 200, 20);
+		labelProyectoID.setBounds(48, 200, 200, 20);
+		titulo.setBounds(80, 82, 294, 30);
+		buttonCrearAsignado.setBounds(118, 341, 149, 43);
+		table.setBounds(29, 45, 596, 259);
+		buttonAsignado.setBounds(236, 11, 111, 30);
+		
+		contentPane.add(comboBoxCientificoId);
+		contentPane.add(comboBoxProyectoId);
+		contentPane.add(labelCientificoId);
+		contentPane.add(labelProyectoID);		
+		contentPane.add(titulo);
+		contentPane.add(buttonCrearAsignado);
+		contentPane.add(table);
+		contentPane.add(buttonAsignado);
+
+		
+		buttonAsignado.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
-		    	Asignado_a asignado_a = new Asignado_a();
-		    	AsignadoViewRead asignadoViewRead = new AsignadoViewRead();
-		    	AsignadoReadController readController = new AsignadoReadController(asignado_a, asignadoViewRead);
-			    readController.iniciarVistaAsignado();
 			    asignadoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
-		contentPane.add(buttonListarAsignado);
 		
-		table = new JTable();
-		table.setBounds(29, 45, 596, 259);
-		contentPane.add(table);
-		
-		buttonCrearAsignado.addActionListener(new AsignadoCreateController(this));
+		buttonCrearAsignado.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	int id = Integer.parseInt(textFieldId.getText());
+		    	String cientifico = (String) comboBoxCientificoId.getSelectedItem();
+		    	String proyecto = (String) comboBoxProyectoId.getSelectedItem();
+		    	
+	            asignado = new Asignado(id, cientifico, proyecto);
+
+	            if (asignadoController.insertarAsignado(asignado)) {
+	                JOptionPane.showMessageDialog(null, "Asignado insertado con éxito");
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Error al insertar el Asignado");
+	            }
+	            asignadoViewRead.actualizarAsignados();
+		    }
+		});
 		
 		cargarCientificosIds(); // Metodo para cargar los IDs de los cientificos al iniciar la vista
 		cargarProyectosIds();// Metodo para cargar los IDs de los proyectos al iniciar la vista
@@ -101,23 +115,6 @@ public class AsignadoViewCreate extends JFrame{
         	comboBoxProyectoId.addItem(id);
         }
     }
+    
 
-
-    public JButton getButtonCrearAsignado() {
-        return buttonCrearAsignado;
-    }
-    
-    
-    public JComboBox<String> getComboBoxCientificoId() {
-        return comboBoxCientificoId;
-    }
-    
-    public JComboBox<String> getComboBoxProyectoId() {
-        return comboBoxProyectoId;
-    }
-    
-    
-    
-    
-    
 }

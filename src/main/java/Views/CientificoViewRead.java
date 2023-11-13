@@ -2,16 +2,13 @@ package Views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.*;
 
-import Controllers.AsignadoReadController;
-import Controllers.CientificoDeleteController;
-import Controllers.CientificoUpdateController;
-import Model.Asignado_a;
+import Controllers.CientificoController;
 import Model.Cientifico;
 import Model.CientificoTable;
-import Model.Proyecto;
 
 public class CientificoViewRead extends JFrame {
 
@@ -22,8 +19,11 @@ public class CientificoViewRead extends JFrame {
 	private JButton buttonUpdateCientifico;
 	private JButton buttonDeleteCientifico;
 	private JTable table;
-	private JButton buttonListarProyectos;
-	private JButton buttonListarAsignado;
+	private CientificoController cientificoController;
+	private List<Cientifico> cientificos;
+	private CientificoTable model;
+	private JButton buttonProyectos;
+	private JButton buttonAsignado;
 
 	public CientificoViewRead() {
 
@@ -36,30 +36,40 @@ public class CientificoViewRead extends JFrame {
 		setContentPane(contentPane);
 
 		label = new JLabel("Lista de científicos");
-		label.setBounds(50, 16, 200, 20);
-		contentPane.add(label);
-
-		buttonUpdateCientifico = new JButton("Editar");
-		buttonUpdateCientifico.setBounds(29, 350, 112, 31);
-		contentPane.add(buttonUpdateCientifico);
-
+		buttonAsignado = new JButton("Asignado");
+		buttonProyectos = new JButton("Proyectos");
+		buttonCrearCientifico = new JButton("Crear");
 		buttonDeleteCientifico = new JButton("Eliminar");
+		buttonUpdateCientifico = new JButton("Editar");
+		table = new JTable();
+		
+		label.setBounds(50, 16, 200, 20);
+		buttonProyectos.setBounds(393, 11, 111, 30);
+		buttonCrearCientifico.setBounds(29, 350, 120, 31);
+		table.setBounds(29, 45, 596, 259);
 		buttonDeleteCientifico.setBounds(162, 350, 108, 31);
+		buttonUpdateCientifico.setBounds(287, 350, 112, 31);
+		buttonAsignado.setBounds(214, 11, 111, 30);
+		
+		contentPane.add(label);
+		contentPane.add(buttonUpdateCientifico);
 		contentPane.add(buttonDeleteCientifico);
+		contentPane.add(table);
+		contentPane.add(buttonCrearCientifico);
+		contentPane.add(buttonProyectos);
+		contentPane.add(buttonAsignado);
+		
+		cientificoController = new CientificoController();
+		actualizarCientificos();
 
-		buttonCrearCientifico = new JButton("Crear científico");
-		buttonCrearCientifico.setBounds(299, 350, 121, 31);
 		buttonCrearCientifico.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Crear una instancia de la vista ClienteViewCreate
 				CientificoViewCreate createView = new CientificoViewCreate();
-				createView.setVisible(true); // Mostrar la vista
+				createView.setVisible(true); 
 				dispose();
 			}
 		});
-		contentPane.add(buttonCrearCientifico);
-		
 		buttonUpdateCientifico.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -70,35 +80,24 @@ public class CientificoViewRead extends JFrame {
 
 					CientificoViewUpdate updateView = new CientificoViewUpdate(cientificoSeleccionado);
 					updateView.setVisible(true);
-
-					CientificoUpdateController updateController = new CientificoUpdateController(updateView,
-							cientificoSeleccionado);
-					updateView.getButtonActualizarCientifico().addActionListener(updateController);
 					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Selecciona un cientifico para actualizar");
 				}
 			}
 		});
-		
 		buttonDeleteCientifico.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = table.getSelectedRow();
 				if (selectedRow >= 0) {
-					CientificoTable model = (CientificoTable) table.getModel();
+					model = (CientificoTable) table.getModel();
 					Cientifico cientificoSeleccionado = model.getCientifico(selectedRow);
 
-					// Crea una instancia del controlador ClienteDeleteController
-					CientificoDeleteController deleteController = new CientificoDeleteController();
-
-					int option = JOptionPane.showConfirmDialog(null,
-							"¿Estás seguro de que deseas eliminar este cliente?", "Confirmar eliminación",
-							JOptionPane.YES_NO_OPTION);
+					int option = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que deseas eliminar este cientifico?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
 					if (option == JOptionPane.YES_OPTION) {
-						// Llama al método para eliminar el cliente
-						if (deleteController.eliminarCientifico(cientificoSeleccionado)) {
+						if (cientificoController.eliminarCientifico(cientificoSeleccionado)) {
 							JOptionPane.showMessageDialog(null, "Cientifico eliminado con éxito");
 							model.removeRowAt(selectedRow);
 							table.setModel(model);
@@ -113,47 +112,41 @@ public class CientificoViewRead extends JFrame {
 			}
 		});
 		
-		buttonListarProyectos = new JButton("Proyectos");
-		buttonListarProyectos.setBounds(393, 11, 111, 30);
-		buttonListarProyectos.addActionListener(new ActionListener() {
+	
+		buttonProyectos.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
 		    	ProyectoViewRead proyectoViewRead = new ProyectoViewRead();
 			    proyectoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
-		contentPane.add(buttonListarProyectos);
 		
-		buttonListarAsignado = new JButton("Asignado");
-		buttonListarAsignado.setBounds(214, 11, 111, 30);
-		buttonListarAsignado.addActionListener(new ActionListener() {
+		
+		
+		buttonAsignado.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
-		    	Asignado_a asignado_a = new Asignado_a();
 		    	AsignadoViewRead asignadoViewRead = new AsignadoViewRead();
-		    	AsignadoReadController readController = new AsignadoReadController(asignado_a, asignadoViewRead);
-			    readController.iniciarVistaAsignado();
-			    asignadoViewRead.setVisible(true);
+		    	asignadoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
-		contentPane.add(buttonListarAsignado);
-		
-
-		table = new JTable();
-		table.setBounds(29, 45, 596, 259);
-		contentPane.add(table);
 		
 	}
-
+	
+	public void actualizarCientificos()
+	{
+		cientificos = cientificoController.obtenerCientificos();
+		
+	    if (cientificos != null && !cientificos.isEmpty()) {
+	    	model = new CientificoTable(cientificos);
+	        table.setModel(model);
+	    }
+	}
+	
 	public JTable getTabla() {
 		return table;
 	}
 
-	public JButton getButtonDeleteCliente() {
-		return buttonDeleteCientifico;
-	}
 }

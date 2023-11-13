@@ -5,7 +5,7 @@ public class Cientifico {
 	private String dni;
 	private String nomApels;
 	
-	public Cientifico(String nomApels, String dni) {
+	public Cientifico(String dni, String nomApels) {
 		this.dni = dni;
 		this.nomApels = nomApels;
 	}

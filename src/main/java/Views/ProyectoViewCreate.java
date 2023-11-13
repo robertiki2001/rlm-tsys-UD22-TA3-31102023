@@ -37,7 +37,7 @@ public class ProyectoViewCreate extends JFrame{
 		setContentPane(contentPane);
 		
 		buttonCrearProyecto = new JButton("Crear Proyecto");
-		labelId = new JLabel("Dni:");
+		labelId = new JLabel("ID:");
 		labelNombre = new JLabel("Nombre:");
 		labelHoras = new JLabel("Horas:");
 		textFieldId = new JTextField();
@@ -81,7 +81,6 @@ public class ProyectoViewCreate extends JFrame{
 		buttonProyecto.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
 			    proyectoViewRead.setVisible(true);
 		        dispose();
 		    }
@@ -90,7 +89,6 @@ public class ProyectoViewCreate extends JFrame{
 		buttonCrearProyecto.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
 		    	String id = textFieldId.getText();
 	            String nombre = textFieldNombre.getText();
 	            
@@ -107,14 +105,10 @@ public class ProyectoViewCreate extends JFrame{
 	                return;
 	            }
 	            
-	            // Crea un nuevo objeto Cliente con los valores
 	            proyecto = new Proyecto(id, nombre, horas);
-
-	            // Inserta el cliente en la base de datos
+	         
 	            if (proyectoController.insertarProyecto(proyecto)) {
-	                // Éxito al insertar, muestra un mensaje
 	                JOptionPane.showMessageDialog(null, "Proyecto insertado con éxito");
-	                // Limpia el formulario
 	                limpiarFormulario();
 	            } else {
 	                JOptionPane.showMessageDialog(null, "Error al insertar el Proyecto");

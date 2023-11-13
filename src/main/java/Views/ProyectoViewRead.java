@@ -6,11 +6,7 @@ import java.util.List;
 
 import javax.swing.*;
 
-import Controllers.AsignadoReadController;
-import Controllers.CientificoReadController;
 import Controllers.ProyectoController;
-import Model.Asignado_a;
-import Model.Cientifico;
 import Model.Proyecto;
 import Model.ProyectoTable;
 
@@ -25,12 +21,6 @@ public class ProyectoViewRead extends JFrame {
 	private JButton buttonDeleteProyecto;
 	private JButton buttonListarAsignado;
 	private JButton buttonListarCientificos;
-	private Cientifico cientifico;
-	private CientificoViewRead cientificoViewRead;
-	private CientificoReadController cientificoReadController;
-	private Asignado_a asignado_a;
-	private AsignadoViewRead asignadoViewRead;
-	private AsignadoReadController asignadoReadController;
 	private ProyectoController proyectoController;
 	private List<Proyecto> proyectos;
 	private ProyectoTable model;
@@ -52,12 +42,7 @@ public class ProyectoViewRead extends JFrame {
 		buttonListarAsignado = new JButton("Asignado");
 		buttonListarCientificos = new JButton("Cientificos");
 		table = new JTable();
-		cientifico = new Cientifico();
-		cientificoViewRead = new CientificoViewRead();
-		cientificoReadController = new CientificoReadController(cientifico, cientificoViewRead);
-		asignado_a = new Asignado_a();
-		asignadoViewRead = new AsignadoViewRead();
-		asignadoReadController = new AsignadoReadController(asignado_a, asignadoViewRead);
+
 		proyectoController = new ProyectoController();
 		actualizarProyectos();
 
@@ -80,12 +65,12 @@ public class ProyectoViewRead extends JFrame {
 		buttonCrearProyecto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Crear una instancia de la vista ClienteViewCreate
 				ProyectoViewCreate createView = new ProyectoViewCreate();
-				createView.setVisible(true); // Mostrar la vista
+				createView.setVisible(true);
 				dispose();
 			}
 		});
+		
 		buttonUpdateProyecto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -102,6 +87,7 @@ public class ProyectoViewRead extends JFrame {
 				}
 			}
 		});
+		
 		buttonDeleteProyecto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -113,7 +99,6 @@ public class ProyectoViewRead extends JFrame {
 					int option = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que deseas eliminar este cliente?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
 					if (option == JOptionPane.YES_OPTION) {
-						// Llama al método para eliminar el cliente
 						if (proyectoController.eliminarProyecto(proyectoSeleccionado)) {
 							JOptionPane.showMessageDialog(null, "Proyecto eliminado con éxito");
 							model.removeRowAt(selectedRow);
@@ -128,19 +113,22 @@ public class ProyectoViewRead extends JFrame {
 				}
 			}
 		});
+		
 		buttonListarAsignado.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-		    	asignadoReadController.iniciarVistaAsignado();
-			    asignadoViewRead.setVisible(true);
+		    	AsignadoViewRead asignadoViewRead = new AsignadoViewRead();
+		    	asignadoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});
+	
+		
 		buttonListarCientificos.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-		    	cientificoReadController.iniciarVista();
-			    cientificoViewRead.setVisible(true);
+		    	CientificoViewRead cientificoViewRead = new CientificoViewRead();
+		    	cientificoViewRead.setVisible(true);
 		        dispose();
 		    }
 		});

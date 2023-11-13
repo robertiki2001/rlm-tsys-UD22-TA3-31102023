@@ -75,21 +75,13 @@ public class ProyectoViewUpdate extends JFrame{
 		contentPane.add(buttonActualizarProyecto);
 		contentPane.add(buttonProyecto);
 
-		buttonProyecto.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			    proyectoViewRead.setVisible(true);
-		        dispose();
-		    }
-		});
 		buttonActualizarProyecto.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-				// Crear una instancia del controlador ClienteReadController
 		    	String nombre = textFieldNombreUpdate.getText();
 	            
 	            if (nombre.isEmpty()) {
-	                JOptionPane.showMessageDialog(null, "Nombre y Id son campos obligatorios.");
+	                JOptionPane.showMessageDialog(null, "Nombre es un campo obligatorio.");
 	                return;
 	            }
 	            
@@ -99,14 +91,11 @@ public class ProyectoViewUpdate extends JFrame{
 	            } catch (NumberFormatException ex) {
 	                JOptionPane.showMessageDialog(null, "Horas debe ser un número válido.");
 	                return;
-	            }
-	            // Actualiza los campos del cliente con los valores modificados           
+	            }   
 	            proyecto.setNombre(nombre);
 	            proyecto.setHoras(horas);
 
-	            // Llamamos a un método para actualizar el cliente en la base de datos
 	            if (proyectoController.actualizarProyecto(proyecto)) {
-	                // Éxito al actualizar, muestra un mensaje
 	                JOptionPane.showMessageDialog(null, "Proyecto actualizado con éxito");
 	            } else {
 	                JOptionPane.showMessageDialog(null, "Error al actualizar el proyecto");
